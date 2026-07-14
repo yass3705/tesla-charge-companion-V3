@@ -1,19 +1,32 @@
-# Mise à jour Tesla sur Mac
+# Mise à jour Tesla V3.2 avec Playwright
 
-1. Dans le dossier local du projet, fais un clic droit sur `Mettre_a_jour_Tesla.command`.
+Cette version utilise un véritable navigateur Chromium piloté par Playwright.
+
+## Première utilisation
+
+1. Clic droit sur `Mettre_a_jour_Tesla.command`.
 2. Clique sur **Ouvrir**.
-3. Confirme l'ouverture si macOS affiche une alerte.
-4. Attends la fin du traitement.
-5. GitHub Desktop s'ouvre.
-6. Dans **Summary**, écris `Mise à jour Tesla`.
-7. Clique sur **Commit to main**.
-8. Clique sur **Push origin**.
+3. Confirme l'ouverture.
+4. Le programme crée automatiquement un environnement Python local.
+5. Il installe Playwright.
+6. Il télécharge Chromium.
+7. Il teste d'abord une seule fiche Tesla.
+8. Si le test réussit, appuie sur Entrée pour lancer les 271 stations.
 
-Le site sera ensuite republié automatiquement.
+La première installation peut prendre plusieurs minutes.
 
-La mise à jour modifie uniquement :
-- `data/tesla_stations.json`
-- `data/metadata.json`
-- `data/tesla_update_summary.json`
+## Après la mise à jour
 
-Elle ne modifie pas les bornes tierces de `data/custom_stations.json`.
+GitHub Desktop s'ouvre.
+
+1. Summary : `Mise à jour Tesla`
+2. Clique sur `Commit to main`.
+3. Clique sur `Push origin`.
+
+## Test avec navigateur visible
+
+Le fichier `Tester_Tesla_avec_navigateur.command` ouvre Chromium visiblement et teste une seule station. Utilise-le si le mode normal échoue.
+
+## Important
+
+Playwright améliore fortement les chances de réussite, mais Tesla peut encore modifier ou renforcer ses protections. Le script commence donc toujours par tester une seule station avant de lancer la mise à jour complète.

@@ -1,4 +1,4 @@
-# Tesla Charge Companion V3.1
+# Tesla Charge Companion V3.2
 
 Application PWA personnelle pour comparer les coûts, distances et durées de recharge.
 
@@ -29,3 +29,12 @@ Le workflow Tesla automatique a donc été retiré.
 Double-cliquer sur `Mettre_a_jour_Tesla.command`, puis publier les fichiers modifiés avec GitHub Desktop.
 
 Voir `MISE_A_JOUR_TESLA_MAC.md`.
+
+
+## V3.2 — Playwright
+
+La mise à jour Tesla utilise maintenant un véritable navigateur Chromium via Playwright.
+
+- installation automatique au premier lancement ;
+- test sur une station avant le traitement complet ;
+- mode navigateur visible disponible avec `Tester_Tesla_avec_navigateur.command`.
