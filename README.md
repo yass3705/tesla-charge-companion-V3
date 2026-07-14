@@ -1,4 +1,4 @@
-# Tesla Charge Companion V3.0
+# Tesla Charge Companion V3.1
 
 Application PWA personnelle pour comparer les coûts, distances et durées de recharge.
 
@@ -19,3 +19,13 @@ Lire `INSTALLATION_GITHUB.md`.
 ## Cloudflare
 
 Non requis pour cette version. GitHub Pages et GitHub Actions suffisent et sont gratuits pour ce projet public.
+
+
+## Mise à jour Tesla sur Mac
+
+Tesla bloque les serveurs GitHub Actions avec une erreur HTTP 403.  
+Le workflow Tesla automatique a donc été retiré.
+
+Double-cliquer sur `Mettre_a_jour_Tesla.command`, puis publier les fichiers modifiés avec GitHub Desktop.
+
+Voir `MISE_A_JOUR_TESLA_MAC.md`.

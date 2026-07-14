@@ -1,13 +1,13 @@
-# GUIDE D’INSTALLATION — TESLA CHARGE COMPANION V3.0
+# GUIDE D’INSTALLATION — TESLA CHARGE COMPANION V3.1
 
 Ce guide suppose que tu utilises un Mac et que tu ne souhaites pas utiliser le Terminal.
 
 ## 1. Décompresser le fichier
 
-1. Télécharge `Tesla_Charge_Companion_V3_0.zip`.
+1. Télécharge `Tesla_Charge_Companion_V3_1.zip`.
 2. Ouvre le Finder puis le dossier Téléchargements.
 3. Double-clique sur le ZIP.
-4. Un dossier `Tesla_Charge_Companion_V3_0` est créé.
+4. Un dossier `Tesla_Charge_Companion_V3_1` est créé.
 5. Ouvre-le.
 
 Tu dois voir notamment :
@@ -60,7 +60,7 @@ Le téléchargement par glisser-déposer dans le navigateur ne gère pas toujour
 1. Dans GitHub Desktop, clique sur `File`.
 2. Clique sur `Add Local Repository`.
 3. Clique sur `Choose`.
-4. Sélectionne le dossier décompressé `Tesla_Charge_Companion_V3_0`.
+4. Sélectionne le dossier décompressé `Tesla_Charge_Companion_V3_1`.
 5. Si GitHub Desktop indique que ce dossier n’est pas encore un dépôt Git :
    - clique sur `create a repository`;
    - conserve le nom proposé;
@@ -72,7 +72,7 @@ Le téléchargement par glisser-déposer dans le navigateur ne gère pas toujour
    - `.github/workflows/update-fx.yml`
 7. En bas à gauche, dans `Summary`, saisis :
 
-`Installation Tesla Charge Companion V3.0`
+`Installation Tesla Charge Companion V3.1`
 
 8. Clique sur `Commit to main`.
 9. Clique ensuite sur `Publish repository`.
@@ -209,7 +209,7 @@ Une mise à jour Tesla ne doit donc pas effacer tes choix locaux.
 
 ## 13. Cloudflare
 
-Cloudflare n’est pas nécessaire pour la V3.0.
+Cloudflare n’est pas nécessaire pour la V3.1.
 
 GitHub Pages et GitHub Actions sont gratuits pour ce projet public et suffisent pour :
 
@@ -218,3 +218,16 @@ GitHub Pages et GitHub Actions sont gratuits pour ce projet public et suffisent 
 - actualiser les taux de change.
 
 Cloudflare pourra être ajouté plus tard pour des mises à jour à la demande, une API intermédiaire ou une protection d’accès. L’ajouter maintenant compliquerait l’installation sans bénéfice indispensable.
+
+
+# Mise à jour Tesla depuis le Mac
+
+Le workflow Tesla GitHub a été retiré, car Tesla refuse les requêtes provenant de GitHub Actions.
+
+1. Ouvre le dossier local du dépôt.
+2. Clic droit sur `Mettre_a_jour_Tesla.command`.
+3. Clique sur **Ouvrir**.
+4. Attends la fin.
+5. Dans GitHub Desktop : `Commit to main`, puis `Push origin`.
+
+La mise à jour des devises reste automatique.

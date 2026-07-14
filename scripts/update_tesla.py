@@ -207,7 +207,7 @@ def update_station(station: dict[str, Any], payload: dict[str, Any]) -> bool:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--stations", default="data/tesla_stations.json")
-    parser.add_argument("--delay", type=float, default=0.35)
+    parser.add_argument("--delay", type=float, default=0.75)
     parser.add_argument("--limit", type=int, default=0)
     args = parser.parse_args()
 
@@ -246,6 +246,18 @@ def main() -> int:
         metadata = {}
     metadata["teslaUpdated"] = date.today().isoformat()
     metadata_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    summary_path = path.parent / "tesla_update_summary.json"
+    summary_path.write_text(
+        json.dumps({
+            "date": date.today().isoformat(),
+            "attempted": len(tesla_stations),
+            "success": success,
+            "failed": len(failures),
+            "failures": failures[:50],
+        }, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
     print(f"Mises à jour réussies : {success}/{len(tesla_stations)}")
     if failures:
