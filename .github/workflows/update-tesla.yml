@@ -1,0 +1,35 @@
+name: Mise à jour Tesla
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 4 * * 0"
+
+permissions:
+  contents: write
+
+jobs:
+  update-tesla:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Actualiser les Superchargeurs Tesla
+        run: python scripts/update_tesla.py --stations data/tesla_stations.json --delay 0.35
+
+      - name: Enregistrer les changements
+        run: |
+          if git diff --quiet -- data/tesla_stations.json data/metadata.json; then
+            echo "Aucun changement."
+            exit 0
+          fi
+          git config user.name "tesla-charge-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/tesla_stations.json data/metadata.json
+          git commit -m "Mise à jour automatique Tesla"
+          git push
