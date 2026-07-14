@@ -1,0 +1,6 @@
+{
+  "version": "5.0",
+  "siteUrl": "https://yass3705.github.io/tesla-charge-companion-V3/",
+  "projectDataFolder": "data",
+  "firefoxManifest": "firefox_extension/manifest.json"
+}

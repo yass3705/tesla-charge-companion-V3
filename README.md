@@ -1,13 +1,38 @@
-# Tesla Charge Companion V4.0
+# Tesla Charge Companion V5.0
 
-La V4 ajoute un onglet Maintenance intégré.
+Le projet comprend deux parties :
 
-## Limite technique importante
-Une page GitHub Pages ne peut ni lire directement `tesla.com` (isolation inter-domaines), ni modifier les fichiers de ton dépôt. Le compagnon Firefox reste donc nécessaire pour la récupération Tesla. L’interface de commande et le suivi sont maintenant intégrés dans l’application.
+## Site GitHub Pages
 
-## Mise à jour Tesla
-1. Charge temporairement `firefox_extension/manifest.json` depuis `about:debugging#/runtime/this-firefox`.
-2. Recharge le site.
-3. Ouvre l’onglet Maintenance.
-4. Clique sur Mettre à jour les Superchargeurs.
-5. Importe le JSON téléchargé, puis remplace le fichier du dépôt pour publier.
+- comparaison coût + distance ;
+- gestion des bornes ;
+- tarifs au kWh ou à la minute ;
+- horaires d’accès ;
+- devises ;
+- opérateurs ;
+- simulations de durée et coût.
+
+## Tesla Companion pour Mac
+
+Le dossier `companion` contient `Tesla Companion.app`.
+
+Fonctions :
+
+- lancement guidé de la mise à jour Tesla dans Firefox ;
+- mise à jour locale des devises ;
+- sauvegarde des bases JSON ;
+- ouverture de GitHub Desktop ;
+- ouverture du site et du dossier du projet.
+
+## Installation
+
+Lire dans cet ordre :
+
+1. `PREMIER_LANCEMENT.md`
+2. `INSTALLATION_MAC.md`
+3. `MISE_A_JOUR_TESLA.md`
+4. `INSTALLATION_GITHUB.md`
+
+## Limitation Tesla
+
+Tesla bloque actuellement les requêtes automatisées Python, GitHub Actions et Playwright. La récupération des prix Tesla passe donc encore par l’extension Firefox temporaire incluse dans `firefox_extension`.

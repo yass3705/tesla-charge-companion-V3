@@ -1,0 +1,63 @@
+#!/bin/zsh
+set -u
+
+APP_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
+PROJECT_DIR="$(cd "$APP_DIR/../.." && pwd)"
+DATA_DIR="$PROJECT_DIR/data"
+BACKUP_DIR="$PROJECT_DIR/backups"
+
+show_dialog() {
+  /usr/bin/osascript -e "display dialog \"$1\" buttons {\"OK\"} default button \"OK\" with title \"Tesla Companion\""
+}
+
+choose_action() {
+  /usr/bin/osascript <<'APPLESCRIPT'
+set choices to {"Mettre à jour Tesla avec Firefox", "Mettre à jour les devises", "Créer une sauvegarde", "Ouvrir GitHub Desktop", "Ouvrir le site", "Afficher le dossier du projet", "Quitter"}
+choose from list choices with title "Tesla Companion V5.0" with prompt "Que veux-tu faire ?" default items {"Mettre à jour Tesla avec Firefox"} OK button name "Continuer" cancel button name "Quitter"
+APPLESCRIPT
+}
+
+while true; do
+  ACTION="$(choose_action 2>/dev/null || true)"
+  case "$ACTION" in
+    *"Mettre à jour Tesla avec Firefox"*)
+      /usr/bin/open -a "Firefox" "about:debugging#/runtime/this-firefox"
+      /usr/bin/open "$PROJECT_DIR/MISE_A_JOUR_TESLA_FIREFOX.md"
+      show_dialog "Firefox est ouvert sur la page de chargement des extensions. Sélectionne firefox_extension/manifest.json, puis utilise l’extension Tesla Charge Companion Updater. Le guide détaillé vient aussi de s’ouvrir."
+      ;;
+    *"Mettre à jour les devises"*)
+      if ! command -v python3 >/dev/null 2>&1; then
+        show_dialog "Python 3 n’est pas disponible. La mise à jour automatique GitHub reste active chaque lundi."
+      else
+        cd "$PROJECT_DIR"
+        if python3 scripts/update_fx.py; then
+          show_dialog "Les devises ont été mises à jour dans data/exchange_rates.json. Ouvre GitHub Desktop pour publier le changement."
+          /usr/bin/open -a "GitHub Desktop" "$PROJECT_DIR" 2>/dev/null || true
+        else
+          show_dialog "La mise à jour des devises a échoué. Vérifie la connexion Internet."
+        fi
+      fi
+      ;;
+    *"Créer une sauvegarde"*)
+      mkdir -p "$BACKUP_DIR"
+      STAMP="$(date +%Y-%m-%d_%H-%M-%S)"
+      DEST="$BACKUP_DIR/$STAMP"
+      mkdir -p "$DEST"
+      cp "$DATA_DIR"/*.json "$DEST/" 2>/dev/null || true
+      show_dialog "Sauvegarde créée dans backups/$STAMP."
+      /usr/bin/open "$DEST"
+      ;;
+    *"Ouvrir GitHub Desktop"*)
+      /usr/bin/open -a "GitHub Desktop" "$PROJECT_DIR" 2>/dev/null || show_dialog "GitHub Desktop n’a pas été trouvé dans Applications."
+      ;;
+    *"Ouvrir le site"*)
+      /usr/bin/open "https://yass3705.github.io/tesla-charge-companion-V3/"
+      ;;
+    *"Afficher le dossier du projet"*)
+      /usr/bin/open "$PROJECT_DIR"
+      ;;
+    *"Quitter"*|"false"|"")
+      exit 0
+      ;;
+  esac
+done

@@ -257,3 +257,12 @@ Au premier lancement de `Mettre_a_jour_Tesla.command`, le programme :
 
 # Mise à jour Tesla avec Firefox
 Lire `MISE_A_JOUR_TESLA_FIREFOX.md`.
+
+
+# Companion Mac
+
+Le Companion n’est pas publié sur GitHub Pages. Il reste dans le dossier local du projet :
+
+`companion/Tesla Companion.app`
+
+Après une mise à jour Tesla ou devises, utilise GitHub Desktop pour faire le commit et le push.
