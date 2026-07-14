@@ -146,6 +146,8 @@ def main() -> int:
     parser.add_argument("--delay", type=float, default=1.2)
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--headed", action="store_true", help="Affiche le navigateur")
+    parser.add_argument("--diagnostic", action="store_true", help="Enregistre une capture et le HTML")
+    parser.add_argument("--pause", action="store_true", help="Garde le navigateur ouvert avant fermeture")
     args = parser.parse_args()
 
     path = Path(args.stations)
@@ -156,6 +158,9 @@ def main() -> int:
 
     success = 0
     failures: list[str] = []
+    diagnostic_dir = Path("diagnostic_tesla")
+    if args.diagnostic:
+        diagnostic_dir.mkdir(exist_ok=True)
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=not args.headed)
@@ -177,16 +182,40 @@ def main() -> int:
 
         for index, station in enumerate(tesla_stations, start=1):
             try:
-                page.goto(station["teslaUrl"], wait_until="domcontentloaded", timeout=45000)
-                page.wait_for_selector("#__NEXT_DATA__", timeout=20000)
-                payload_text = page.locator("#__NEXT_DATA__").text_content()
+                response = page.goto(station["teslaUrl"], wait_until="domcontentloaded", timeout=45000)
+                page.wait_for_timeout(3500)
+
+                payload_text = page.locator("#__NEXT_DATA__").text_content(timeout=12000)
                 if not payload_text:
                     raise ValueError("__NEXT_DATA__ vide")
+
+                if args.diagnostic and index == 1:
+                    (diagnostic_dir / "page.html").write_text(page.content(), encoding="utf-8")
+                    page.screenshot(path=str(diagnostic_dir / "capture.png"), full_page=True)
+                    details = (
+                        "URL: " + page.url + "\n"
+                        + "TITLE: " + page.title() + "\n"
+                        + "HTTP: " + str(response.status if response else "inconnu") + "\n"
+                    )
+                    (diagnostic_dir / "details.txt").write_text(details, encoding="utf-8")
+
                 payload = json.loads(payload_text)
                 update_station(station, payload)
                 success += 1
                 print(f"[{index}/{len(tesla_stations)}] OK {station.get('name')}")
             except (PlaywrightTimeoutError, ValueError, json.JSONDecodeError) as exc:
+                if args.diagnostic and index == 1:
+                    try:
+                        (diagnostic_dir / "page.html").write_text(page.content(), encoding="utf-8")
+                        page.screenshot(path=str(diagnostic_dir / "capture.png"), full_page=True)
+                        details = (
+                            "URL: " + page.url + "\n"
+                            + "TITLE: " + page.title() + "\n"
+                            + "ERREUR: " + str(exc) + "\n"
+                        )
+                        (diagnostic_dir / "details.txt").write_text(details, encoding="utf-8")
+                    except Exception as diag_exc:
+                        print(f"Diagnostic impossible: {diag_exc}", file=sys.stderr)
                 message = f"{station.get('name')}: {exc}"
                 failures.append(message)
                 print(f"[{index}/{len(tesla_stations)}] ERREUR {message}", file=sys.stderr)
@@ -196,6 +225,9 @@ def main() -> int:
                 print(f"[{index}/{len(tesla_stations)}] ERREUR {message}", file=sys.stderr)
             time.sleep(max(0.0, args.delay))
 
+        if args.pause:
+            print("Le navigateur reste ouvert pour diagnostic.")
+            input("Appuie sur Entrée dans le Terminal pour fermer Chromium...")
         browser.close()
 
     if success > 0:

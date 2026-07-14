@@ -1,4 +1,4 @@
-# GUIDE D’INSTALLATION — TESLA CHARGE COMPANION V3.2
+# GUIDE D’INSTALLATION — TESLA CHARGE COMPANION V3.3
 
 Ce guide suppose que tu utilises un Mac et que tu ne souhaites pas utiliser le Terminal.
 
@@ -72,7 +72,7 @@ Le téléchargement par glisser-déposer dans le navigateur ne gère pas toujour
    - `.github/workflows/update-fx.yml`
 7. En bas à gauche, dans `Summary`, saisis :
 
-`Installation Tesla Charge Companion V3.2`
+`Installation Tesla Charge Companion V3.3`
 
 8. Clique sur `Commit to main`.
 9. Clique ensuite sur `Publish repository`.
@@ -209,7 +209,7 @@ Une mise à jour Tesla ne doit donc pas effacer tes choix locaux.
 
 ## 13. Cloudflare
 
-Cloudflare n’est pas nécessaire pour la V3.2.
+Cloudflare n’est pas nécessaire pour la V3.3.
 
 GitHub Pages et GitHub Actions sont gratuits pour ce projet public et suffisent pour :
 
@@ -244,3 +244,16 @@ Au premier lancement de `Mettre_a_jour_Tesla.command`, le programme :
 3. télécharge Chromium ;
 4. teste une station ;
 5. demande confirmation avant la mise à jour complète.
+
+
+# Diagnostic Tesla
+
+1. Clic droit sur `Diagnostiquer_Tesla.command`.
+2. Clique sur **Ouvrir**.
+3. Observe la page dans Chromium.
+4. Appuie sur Entrée dans le Terminal pour fermer Chromium.
+5. Le dossier `diagnostic_tesla` s’ouvre automatiquement.
+
+
+# Mise à jour Tesla avec Firefox
+Lire `MISE_A_JOUR_TESLA_FIREFOX.md`.

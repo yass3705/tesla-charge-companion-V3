@@ -1,9 +1,0 @@
-{
-  "date": "2026-07-14",
-  "attempted": 1,
-  "success": 0,
-  "failed": 1,
-  "failures": [
-    "Tesla La Léchère-les-Bains: Page.wait_for_selector: Timeout 20000ms exceeded.\nCall log:\n  - waiting for locator(\"#__NEXT_DATA__\") to be visible\n"
-  ]
-}
