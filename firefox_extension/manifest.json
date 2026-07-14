@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "name": "Tesla Charge Companion Updater",
-  "version": "1.0.0",
-  "description": "Met à jour les données publiques Tesla depuis Firefox puis télécharge tesla_stations.json.",
+  "version": "2.0.0",
+  "description": "Compagnon Firefox de Tesla Charge Companion V4.",
   "permissions": [
     "tabs",
     "downloads",
@@ -22,5 +22,18 @@
     "gecko": {
       "id": "tesla-charge-updater@yass3705.local"
     }
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.github.io/*",
+        "http://localhost/*",
+        "http://127.0.0.1/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ]
 }

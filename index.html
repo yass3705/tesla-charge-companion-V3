@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0b0c">
 <link rel="manifest" href="manifest.webmanifest">
-<title>Tesla Charge Companion 3.3</title>
+<title>Tesla Charge Companion 4.0</title>
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -15,12 +15,13 @@
 </datalist>
 <header>
 <h1>⚡ Tesla Charge Companion</h1>
-<p>Version 3.3 · mise à jour Tesla depuis Firefox</p>
+<p>Version 4.0 · maintenance intégrée et compagnon Firefox</p>
 <nav>
 <button class="active" data-tab="compare">Comparer</button>
 <button data-tab="stations">Bornes</button>
 <button data-tab="edit">Ajouter / modifier</button>
 <button data-tab="fx">Devises</button>
+<button data-tab="maintenance">Maintenance</button>
 </nav>
 </header>
 <main>
@@ -113,7 +114,7 @@
 <section id="fx" class="panel">
 <div class="card">
 <h3>À propos</h3>
-<div class="small">Tesla Charge Companion <b>V3.3</b><br>
+<div class="small">Tesla Charge Companion <b>V4.0</b><br>
 Base Tesla séparée des bornes personnelles. Les mises à jour automatiques ne remplacent pas tes bornes tierces.</div>
 <div id="dataFreshness" class="small" style="margin-top:10px"></div>
 </div>
@@ -127,6 +128,36 @@ Base Tesla séparée des bornes personnelles. Les mises à jour automatiques ne 
 <div id="fxStatus" class="small" style="margin-top:10px"></div>
 <div id="fxRows" style="margin-top:12px"></div>
 <button class="primary" onclick="saveFxRates()">Enregistrer les taux manuels</button>
+</div>
+</section>
+
+<section id="maintenance" class="panel">
+<div class="card">
+<h3>Maintenance Tesla</h3>
+<div class="small">La commande est intégrée ici. Firefox exige néanmoins le module complémentaire local pour lire les pages Tesla, car une page GitHub ne peut pas lire directement le contenu de tesla.com.</div>
+<div id="maintExtension" class="box" style="margin-top:12px">Vérification du compagnon Firefox…</div>
+<div class="row" style="margin-top:12px">
+<button class="primary" style="margin:0" onclick="startTeslaMaintenance()">Mettre à jour les Superchargeurs</button>
+<button class="secondary" onclick="stopTeslaMaintenance()">Arrêter</button>
+</div>
+<progress id="maintProgress" value="0" max="100" style="width:100%;margin-top:14px"></progress>
+<div id="maintStatus" class="small" style="margin-top:8px">En attente.</div>
+</div>
+<div class="card">
+<h3>Importer le résultat</h3>
+<div class="small">Après la mise à jour, Firefox télécharge <code>tesla_stations.json</code>. Sélectionne-le ici pour l’utiliser immédiatement dans l’application.</div>
+<input id="maintImport" type="file" accept=".json,application/json" style="margin-top:12px">
+<button class="primary" onclick="importTeslaMaintenanceFile()">Importer la nouvelle base</button>
+<div id="maintImportStatus" class="small"></div>
+</div>
+<div class="card">
+<h3>Sauvegarde</h3>
+<div class="row">
+<button class="secondary" onclick="exportAppBackup()">Exporter ma configuration</button>
+<button class="secondary" onclick="document.getElementById('backupImport').click()">Restaurer une configuration</button>
+<input id="backupImport" type="file" accept=".json,application/json" hidden onchange="restoreAppBackup(event)">
+</div>
+<div class="small" style="margin-top:10px">La sauvegarde contient les bornes locales, les taux manuels, l’adresse par défaut et les réglages enregistrés dans ce navigateur.</div>
 </div>
 </section>
 </main>

@@ -1,5 +1,5 @@
 const DAYS=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];let defaultStations=[],stations=[],routeResults={},fxRowSeq=0;const $=id=>document.getElementById(id);
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.tab).classList.add('active');if(b.dataset.tab==='stations')renderStations();if(b.dataset.tab==='fx')renderFxRates()});
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.tab).classList.add('active');if(b.dataset.tab==='stations')renderStations();if(b.dataset.tab==='fx')renderFxRates();if(b.dataset.tab==='maintenance')checkTeslaCompanion()});
 $('simDate').valueAsDate=new Date();$('simTime').value=new Date().toTimeString().slice(0,5);$('simUnplugTime').value='';$('fUpdated').valueAsDate=new Date();$('simOrigin').value=localStorage.getItem('tccDefaultOrigin')||'';
 function oldCustomStations(){let a=JSON.parse(localStorage.getItem('tccStationsV14')||'[]');return a.filter(x=>String(x.id||'').startsWith('station-'))}
 function localStations(){return JSON.parse(localStorage.getItem('tccStationsV30')||'null')}
@@ -471,3 +471,39 @@ loadPublishedFx().then(()=>Promise.all([
  $('results').innerHTML=`<div class="bad">Chargement des données impossible : ${err.message}</div>`;
 });
 buildDays();resetForm();
+
+
+// ---- V4 Maintenance intégrée ----
+let teslaCompanionAvailable=false;
+function maintenancePost(type,payload={}){window.postMessage({source:'tcc-app',type,...payload},window.location.origin)}
+function checkTeslaCompanion(){
+ teslaCompanionAvailable=false;
+ $('maintExtension').innerHTML='<span class="warn">Recherche du compagnon Firefox…</span>';
+ maintenancePost('TCC_PING');
+ setTimeout(()=>{if(!teslaCompanionAvailable)$('maintExtension').innerHTML='<span class="bad">Compagnon Firefox non détecté.</span><br><span class="small">Charge temporairement <code>firefox_extension/manifest.json</code> depuis <code>about:debugging#/runtime/this-firefox</code>, puis recharge cette page.</span>'},1200);
+}
+window.addEventListener('message',event=>{
+ if(event.source!==window||event.origin!==window.location.origin)return;
+ const m=event.data||{};if(m.source!=='tcc-extension')return;
+ if(m.type==='TCC_PONG'){teslaCompanionAvailable=true;$('maintExtension').innerHTML='<span class="good">✓ Compagnon Firefox détecté et prêt.</span>'}
+ if(m.type==='TCC_PROGRESS'){$('maintProgress').max=m.total||1;$('maintProgress').value=m.current||0;$('maintStatus').textContent=m.text||''}
+ if(m.type==='TCC_FINISHED'){$('maintStatus').innerHTML=m.success?`<span class="good">${m.text}</span>`:`<span class="warn">${m.text}</span>`;$('maintProgress').value=$('maintProgress').max}
+});
+function startTeslaMaintenance(){
+ if(!teslaCompanionAvailable){checkTeslaCompanion();alert('Le compagnon Firefox n’est pas détecté. Consulte le message dans l’onglet Maintenance.');return}
+ if(!confirm(`Firefox va parcourir ${stations.filter(s=>s.source==='teslaSupercharger'&&s.teslaUrl).length} fiches Tesla. Continuer ?`))return;
+ $('maintStatus').textContent='Démarrage…';$('maintProgress').value=0;
+ maintenancePost('TCC_START',{stations});
+}
+function stopTeslaMaintenance(){maintenancePost('TCC_STOP');$('maintStatus').textContent='Demande d’arrêt envoyée…'}
+async function importTeslaMaintenanceFile(){
+ const f=$('maintImport').files[0];if(!f){$('maintImportStatus').innerHTML='<span class="bad">Sélectionne d’abord le fichier téléchargé.</span>';return}
+ try{const data=JSON.parse(await f.text());if(!Array.isArray(data))throw new Error('Le fichier ne contient pas une liste de bornes.');
+ const tesla=data.filter(s=>s.source==='teslaSupercharger');if(!tesla.length)throw new Error('Aucune borne Tesla trouvée.');
+ const custom=stations.filter(s=>s.source!=='teslaSupercharger');stations=[...tesla,...custom];saveLocal();renderStations();
+ $('maintImportStatus').innerHTML=`<span class="good">✓ ${tesla.length} Superchargeurs importés dans ce navigateur.</span><br>Pour publier ces données pour tous tes appareils, remplace aussi <code>data/tesla_stations.json</code> dans le dépôt puis fais Commit et Push.`;
+ }catch(e){$('maintImportStatus').innerHTML=`<span class="bad">Erreur : ${e.message}</span>`}
+}
+function downloadJson(name,data){const blob=new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json'}),u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)}
+function exportAppBackup(){downloadJson('tesla-charge-companion-backup.json',{version:'4.0',created:new Date().toISOString(),stations,fx:getFxState(),defaultOrigin:localStorage.getItem('tccDefaultOrigin')||''})}
+async function restoreAppBackup(event){try{const f=event.target.files[0];if(!f)return;const b=JSON.parse(await f.text());if(!Array.isArray(b.stations))throw new Error('Sauvegarde invalide');stations=b.stations;saveLocal();if(b.fx)setFxState(b.fx);if(b.defaultOrigin!=null)localStorage.setItem('tccDefaultOrigin',b.defaultOrigin);$('simOrigin').value=b.defaultOrigin||'';renderStations();renderFxRates();alert('Configuration restaurée.')}catch(e){alert('Restauration impossible : '+e.message)}}
